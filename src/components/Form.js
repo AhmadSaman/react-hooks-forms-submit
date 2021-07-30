@@ -1,24 +1,59 @@
 import React, { useState } from "react";
 
 function Form() {
-  const [firstName, setFirstName] = useState("John");
-  const [lastName, setLastName] = useState("Henry");
+	const [firstName, setFirstName] = useState("John");
+	const [lastName, setLastName] = useState("Henry");
+	const [submittedData, setSubmittedData] = useState([]);
+	const [errors, setErrors] = useState([]);
 
-  function handleFirstNameChange(event) {
-    setFirstName(event.target.value);
-  }
+	function handleFirstNameChange(event) {
+		setFirstName(event.target.value);
+	}
 
-  function handleLastNameChange(event) {
-    setLastName(event.target.value);
-  }
+	function handleLastNameChange(event) {
+		setLastName(event.target.value);
+	}
+	function handleSubmit(event) {
+		event.preventDefault();
+		if (firstName) {
+			const formData = { firstName: firstName, lastName: lastName };
+			const arrayData = [...submittedData, formData];
+			setSubmittedData(arrayData);
+			setFirstName("");
+			setLastName("");
+			setErrors([]);
+		} else {
+			setErrors(["First Name is Required"]);
+		}
+	}
+	const displaySubittedData = submittedData.map(
+		({ firstName, lastName }, index) => {
+			return (
+				<p key={index}>
+					first name: {firstName} | last name: {lastName}
+				</p>
+			);
+		}
+	);
 
-  return (
-    <form>
-      <input type="text" onChange={handleFirstNameChange} value={firstName} />
-      <input type="text" onChange={handleLastNameChange} value={lastName} />
-      <button type="submit">Submit</button>
-    </form>
-  );
+	return (
+		<React.Fragment>
+			<form onSubmit={handleSubmit}>
+				<input type="text" onChange={handleFirstNameChange} value={firstName} />
+				<input type="text" onChange={handleLastNameChange} value={lastName} />
+				<button type="submit">Submit</button>
+			</form>
+			{errors.length > 0
+				? errors.map((error, index) => (
+						<p key={index} style={{ color: "red" }}>
+							{error}
+						</p>
+				  ))
+				: null}
+			<h3>Submissions</h3>
+			{displaySubittedData}
+		</React.Fragment>
+	);
 }
 
 export default Form;
